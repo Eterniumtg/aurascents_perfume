@@ -656,6 +656,35 @@ async function testGithubConnection() {
     }
 }
 
+// Commit via server endpoint (recommended - token kept on server)
+async function commitProductsViaServer(products) {
+    try {
+        showNotification('Publishing products via server...', 'info');
+        const payload = {
+            products,
+            owner: document.getElementById('githubOwner') ? document.getElementById('githubOwner').value.trim() : undefined,
+            repo: document.getElementById('githubRepo') ? document.getElementById('githubRepo').value.trim() : undefined
+        };
+
+        const res = await fetch('/api/commit-products', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Admin-Password': ADMIN_PASSWORD },
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+            return { ok: true };
+        }
+
+        const j = await res.json().catch(() => ({}));
+        return { ok: false, message: j.error || 'Server commit failed' };
+    } catch (error) {
+        console.error('Server commit error:', error);
+        return { ok: false, message: error.message };
+    }
+}
+
+
 // Commit (create/update) data/products.json in the repository using GitHub Contents API
 async function commitProductsToGithub(products) {
     const owner = localStorage.getItem('aurascents_github_owner');
@@ -710,30 +739,43 @@ async function commitProductsToGithub(products) {
     }
 }
 
-// Update saveProducts to attempt GitHub commit when configured
+// Update saveProducts to attempt server commit first, then client PAT commit, then original save
 const originalSaveProducts = saveProducts;
 async function trySaveProductsWithGithub() {
     // Always save to localStorage first
     localStorage.setItem('aurascents_products', JSON.stringify(currentProducts));
 
-    // If GitHub settings exist, try to commit
+    // Try server commit (preferred; keeps token on server)
+    try {
+        const serverRes = await commitProductsViaServer(currentProducts);
+        if (serverRes && serverRes.ok) {
+            showNotification('Products saved via server! Deployment will follow automatically.', 'success');
+            return true;
+        } else if (serverRes && serverRes.message) {
+            // Inform but continue to fallback
+            showNotification(`Server commit: ${serverRes.message}`, 'warning');
+        }
+    } catch (err) {
+        console.warn('Server commit failed:', err);
+    }
+
+    // If server commit not configured or failed, try client-side PAT commit
     const owner = localStorage.getItem('aurascents_github_owner');
     const repo = localStorage.getItem('aurascents_github_repo');
     const token = localStorage.getItem('aurascents_github_token');
 
     if (owner && repo && token) {
-        showNotification('Committing products to GitHub...', 'info');
+        showNotification('Committing products to GitHub (browser PAT)...', 'info');
         const res = await commitProductsToGithub(currentProducts);
         if (res.ok) {
             showNotification('Products saved to GitHub! Deployment will follow automatically.', 'success');
             return true;
         } else {
             showNotification(`GitHub commit failed: ${res.message || 'See console'}`, 'error');
-            // Fallthrough to original behavior (try server)
         }
     }
 
-    // If GitHub not configured or commit failed, fall back to original save behavior
+    // If neither server nor client commit succeeded, fall back to original save behavior
     return await originalSaveProducts();
 }
 

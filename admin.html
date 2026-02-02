@@ -306,7 +306,7 @@
                     <i class="fab fa-github text-black mr-2"></i>GitHub Deployment Settings
                 </h3>
                 <div class="space-y-3 text-gray-700">
-                    <p class="text-sm text-gray-600">Enter your repository details and a Personal Access Token (PAT) with repo contents write permission. The token is stored in your browser localStorage only.</p>
+                    <p class="text-sm text-gray-600">Enter your repository details and a Personal Access Token (PAT) with repo contents write permission. The token is stored in your browser localStorage only. Alternatively, you can deploy the server function and set the token as a server environment variable (<code>GITHUB_PAT</code>) so the admin panel can commit securely without storing a token in your browser.</p>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <input type="text" id="githubOwner" class="input-field" placeholder="Owner (e.g., your-username)" />
@@ -314,6 +314,7 @@
                         <input type="password" id="githubToken" class="input-field" placeholder="Personal Access Token (PAT)" />
                     </div>
 
+                    <p class="text-xs text-gray-500 mt-2">Server mode requires setting environment variables on your hosting provider: <code>GITHUB_PAT</code>, and optionally <code>GITHUB_OWNER</code>, <code>GITHUB_REPO</code>, and <code>ADMIN_PASSWORD</code> (defaults to the admin password in the panel if not set).</p>
                     <div class="flex gap-3 pt-3">
                         <button id="saveGithubSettings" class="btn-primary">
                             <i class="fas fa-save mr-2"></i>Save Settings
