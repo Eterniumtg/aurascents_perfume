@@ -99,6 +99,29 @@ export default async (req: Request, context: Context) => {
       });
     }
 
+    // Attempt to trigger a repository_dispatch event so GitHub Actions can run securely
+    try {
+      const dispatchUrl = `https://api.github.com/repos/${owner}/${repo}/dispatches`;
+      const dispatchRes = await fetch(dispatchUrl, {
+        method: "POST",
+        headers: {
+          Accept: "application/vnd.github+json",
+          Authorization: `token ${GITHUB_PAT}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ event_type: "admin_products_updated", client_payload: { via: "commit-products" } })
+      });
+
+      if (!dispatchRes.ok) {
+        const dErr = await dispatchRes.text().catch(() => "");
+        console.warn("Repository dispatch failed:", dispatchRes.status, dErr);
+      } else {
+        console.log("Repository dispatch event sent successfully")
+      }
+    } catch (dispatchError) {
+      console.error("Error sending repository dispatch:", dispatchError);
+    }
+
     return new Response(JSON.stringify({ success: true }), {
       headers: { "Content-Type": "application/json" }
     });

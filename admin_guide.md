@@ -305,10 +305,40 @@ const defaultProducts = {
 
 **4. Deploy**
 ```
-- Upload to Netlify
+- Upload to Netlify or push to GitHub (see README for GitHub Pages)
 - Test live site
 - Verify all products show
 ```
+
+### Publish products automatically via Admin (GitHub)
+You can publish changes from the Admin panel directly to your GitHub repository so product updates go live automatically.
+
+Options:
+- Server mode (recommended): Deploy the `commit-products` serverless function and set environment variables on your hosting provider:
+  - `GITHUB_PAT` — a GitHub Personal Access Token (PAT) with repository write permissions
+  - `GITHUB_OWNER` (optional) — default repo owner
+  - `GITHUB_REPO` (optional) — default repo name
+  - `ADMIN_PASSWORD` (optional) — server will require this value in `X-Admin-Password` header
+
+  For Netlify: Site settings → Build & deploy → Environment → add the variables. After deployment, the Admin panel will POST to `/.netlify/functions/commit-products` to commit `data/products.json` securely.
+
+- Client mode (fallback): Enter a PAT in Admin → GitHub Deployment Settings. The PAT is stored in localStorage and used directly from the browser (less secure).
+
+Testing:
+- Use Admin panel: save GitHub Owner & Repo, then add/update a product and click Save. If server mode is configured the server will commit and trigger the deployment workflow automatically.
+- Manual test (curl):
+
+```bash
+curl -X POST "https://YOUR_SITE/.netlify/functions/commit-products" \
+  -H "Content-Type: application/json" \
+  -H "X-Admin-Password: aurascents2026" \
+  -d '{"owner":"YOUR_GITHUB_USER","repo":"YOUR_REPO","products": [{"id":"test1","name":"Test","price":1,"category":"ladies","image":"","items":[]}]}'
+```
+
+Security reminders:
+- Revoke and rotate PATs immediately if exposed.
+- Prefer server mode to avoid placing PATs in browsers.
+- Keep the PAT scope minimal and do not share it publicly.
 
 ---
 

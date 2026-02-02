@@ -113,6 +113,51 @@ git push -u origin main
 Notes:
 - Product updates committed via the Admin panel will update `data/products.json` which triggers the GitHub Actions workflow and redeploys the site.
 
+Server vs Client commit modes (recommended: Server)
+
+- Server mode (recommended): Deploy the `commit-products` serverless function and store a GitHub Personal Access Token (PAT) as an environment variable on your hosting provider (name it `GITHUB_PAT`). When configured, the Admin panel will call `/api/commit-products` and the server will commit `data/products.json` and emit a `repository_dispatch` event to trigger the `dispatch-deploy.yml` workflow. This keeps the PAT off users' browsers and is more secure.
+
+- Client mode (fallback): If you prefer not to run a server, you can enter a PAT directly into Admin → GitHub Deployment Settings. The admin UI will use the PAT from your browser's localStorage to commit the file (less secure — token lives on the client).
+
+How to create a PAT (short):
+1. In GitHub: Settings → Developer settings → Personal access tokens → Generate new token (classic or fine-grained).
+2. Give the token minimal scopes required to update repository contents (e.g., `repo` for classic tokens, or the equivalent repository write access for fine-grained tokens).
+3. Save the token securely — do NOT paste it into chat or public places.
+
+How to set server env vars
+
+- Netlify:
+  1. Go to Site settings → Build & deploy → Environment → Environment variables
+  2. Add `GITHUB_PAT` = your PAT, optionally `GITHUB_OWNER` and `GITHUB_REPO` if you want the server to default to those values, and `ADMIN_PASSWORD` if you want to require it for server commits.
+  3. Deploy the site (Netlify will build functions and host `/.netlify/functions/commit-products`).
+
+- Vercel:
+  1. Project Settings → Environment Variables → Add `GITHUB_PAT` and other variables.
+  2. Redeploy your project.
+
+Testing the server commit endpoint (after env vars set):
+
+- From Admin: Set Owner & Repo in the Admin panel and save. Add/update a product and save — the server should commit and return success.
+
+- Manual test (curl):
+
+```bash
+curl -X POST "https://YOUR_SITE/.netlify/functions/commit-products" \
+  -H "Content-Type: application/json" \
+  -H "X-Admin-Password: aurascents2026" \
+  -d '{"owner":"YOUR_GITHUB_USER","repo":"YOUR_REPO","products": [{"id":"test1","name":"Test","price":1,"category":"ladies","image":"","items":[]}]}'
+```
+
+Repository dispatch & workflow
+
+- The server sends a `repository_dispatch` event with type `admin_products_updated` after a successful commit. The GitHub Actions workflow `dispatch-deploy.yml` listens for this event and deploys to `gh-pages` (or run on push to `main` as configured).
+
+Security notes
+
+- Revoke and rotate PATs immediately if exposed. Delete any tokens you mistakenly posted publicly.
+- Use server mode when possible to avoid storing tokens in users' browsers.
+- Limit token scope to the minimum required and prefer fine-grained tokens if possible.
+
 ## 📁 Files Included
 
 ```
