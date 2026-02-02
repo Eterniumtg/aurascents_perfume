@@ -67,8 +67,17 @@ async function generateStorefrontJs() {
   let products = defaultProducts;
 
   try {
-    // Check if we have Netlify context (running in Netlify build)
-    if (process.env.NETLIFY) {
+    // Prefer repository file at ./data/products.json (works on GitHub Pages and local builds)
+    const dataPath = path.join(process.cwd(), "data", "products.json");
+    if (fs.existsSync(dataPath)) {
+      console.log("Found data/products.json, using repository products");
+      const file = fs.readFileSync(dataPath, "utf8");
+      const repoProducts = JSON.parse(file);
+      if (Array.isArray(repoProducts) && repoProducts.length > 0) {
+        products = repoProducts;
+      }
+    } else if (process.env.NETLIFY) {
+      // Backwards compatibility: if running in Netlify and blobs are still used
       console.log("Running in Netlify build environment, fetching products from Blobs...");
       const store = getStore("products");
       const storedProducts = await store.get("all-products", { type: "json" });
@@ -80,10 +89,10 @@ async function generateStorefrontJs() {
         console.log("No products found in Blobs, using defaults");
       }
     } else {
-      console.log("Not running in Netlify environment, using default products");
+      console.log("No data file found, using default products");
     }
   } catch (error) {
-    console.error("Error fetching products from Blobs:", error);
+    console.error("Error fetching products:", error);
     console.log("Using default products as fallback");
   }
 

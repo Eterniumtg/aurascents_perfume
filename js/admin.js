@@ -419,7 +419,7 @@ async function deleteProduct(productId) {
     }
 
     currentProducts = currentProducts.filter(p => p.id !== productId);
-    if (await saveProducts()) {
+    if (await trySaveProductsWithGithub()) {
         renderProducts();
         updateStats();
         showNotification('Product deleted successfully!', 'success');
@@ -507,7 +507,7 @@ if (productForm) {
             currentProducts.push(formData);
         }
 
-        if (await saveProducts()) {
+        if (await trySaveProductsWithGithub()) {
             renderProducts();
             updateStats();
             closeProductModal();
@@ -579,6 +579,172 @@ function showNotification(message, type = 'success') {
         }, 300);
     }, 3000);
 }
+
+// --- GitHub integration helpers ---
+
+function loadGithubSettings() {
+    const owner = localStorage.getItem('aurascents_github_owner') || '';
+    const repo = localStorage.getItem('aurascents_github_repo') || '';
+    const token = localStorage.getItem('aurascents_github_token') || '';
+
+    const ownerEl = document.getElementById('githubOwner');
+    const repoEl = document.getElementById('githubRepo');
+    const tokenEl = document.getElementById('githubToken');
+
+    if (ownerEl) ownerEl.value = owner;
+    if (repoEl) repoEl.value = repo;
+    if (tokenEl) tokenEl.value = token;
+}
+
+function saveGithubSettings() {
+    const owner = document.getElementById('githubOwner').value.trim();
+    const repo = document.getElementById('githubRepo').value.trim();
+    const token = document.getElementById('githubToken').value.trim();
+
+    if (!owner || !repo || !token) {
+        showNotification('Please fill in owner, repo and token', 'error');
+        return;
+    }
+
+    localStorage.setItem('aurascents_github_owner', owner);
+    localStorage.setItem('aurascents_github_repo', repo);
+    localStorage.setItem('aurascents_github_token', token);
+
+    showNotification('GitHub settings saved locally', 'success');
+    loadGithubSettings();
+}
+
+async function testGithubConnection() {
+    const owner = document.getElementById('githubOwner').value.trim();
+    const repo = document.getElementById('githubRepo').value.trim();
+    const token = document.getElementById('githubToken').value.trim();
+
+    const notice = document.getElementById('githubSettingsNotice');
+    if (notice) {
+        notice.classList.add('hidden');
+        notice.textContent = '';
+    }
+
+    if (!owner || !repo || !token) {
+        showNotification('Please fill in owner, repo and token', 'error');
+        return;
+    }
+
+    try {
+        const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+            headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github+json' }
+        });
+
+        if (res.ok) {
+            showNotification('GitHub repo connection OK', 'success');
+            if (notice) {
+                notice.classList.remove('hidden');
+                notice.textContent = 'Connection successful. Commits will update data/products.json and trigger deploys.';
+            }
+        } else {
+            const err = await res.json().catch(() => ({}));
+            console.warn('GitHub test failed', err);
+            showNotification('Could not connect to repository. Check token and permissions.', 'error');
+            if (notice) {
+                notice.classList.remove('hidden');
+                notice.textContent = 'Connection failed. Double-check owner, repo and PAT permissions.';
+            }
+        }
+    } catch (error) {
+        console.error('Error testing GitHub connection:', error);
+        showNotification('Network error while testing GitHub connection', 'error');
+    }
+}
+
+// Commit (create/update) data/products.json in the repository using GitHub Contents API
+async function commitProductsToGithub(products) {
+    const owner = localStorage.getItem('aurascents_github_owner');
+    const repo = localStorage.getItem('aurascents_github_repo');
+    const token = localStorage.getItem('aurascents_github_token');
+
+    if (!owner || !repo || !token) return { ok: false, message: 'GitHub settings missing' };
+
+    const path = 'data/products.json';
+    const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+    const contentStr = JSON.stringify(products, null, 2);
+    const contentB64 = btoa(unescape(encodeURIComponent(contentStr)));
+
+    try {
+        // Check if file exists to get current sha
+        const getRes = await fetch(apiBase, {
+            headers: { Accept: 'application/vnd.github+json', Authorization: `token ${token}` }
+        });
+
+        let sha;
+        if (getRes.ok) {
+            const j = await getRes.json();
+            sha = j.sha;
+        }
+
+        const putBody = {
+            message: 'Update products via admin panel',
+            content: contentB64
+        };
+        if (sha) putBody.sha = sha;
+
+        const putRes = await fetch(apiBase, {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/vnd.github+json',
+                Authorization: `token ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(putBody)
+        });
+
+        if (putRes.ok) {
+            return { ok: true };
+        } else {
+            const err = await putRes.json().catch(() => ({}));
+            console.warn('GitHub commit failed', err);
+            return { ok: false, message: err.message || 'Commit failed' };
+        }
+    } catch (error) {
+        console.error('Error committing to GitHub:', error);
+        return { ok: false, message: error.message };
+    }
+}
+
+// Update saveProducts to attempt GitHub commit when configured
+const originalSaveProducts = saveProducts;
+async function trySaveProductsWithGithub() {
+    // Always save to localStorage first
+    localStorage.setItem('aurascents_products', JSON.stringify(currentProducts));
+
+    // If GitHub settings exist, try to commit
+    const owner = localStorage.getItem('aurascents_github_owner');
+    const repo = localStorage.getItem('aurascents_github_repo');
+    const token = localStorage.getItem('aurascents_github_token');
+
+    if (owner && repo && token) {
+        showNotification('Committing products to GitHub...', 'info');
+        const res = await commitProductsToGithub(currentProducts);
+        if (res.ok) {
+            showNotification('Products saved to GitHub! Deployment will follow automatically.', 'success');
+            return true;
+        } else {
+            showNotification(`GitHub commit failed: ${res.message || 'See console'}`, 'error');
+            // Fallthrough to original behavior (try server)
+        }
+    }
+
+    // If GitHub not configured or commit failed, fall back to original save behavior
+    return await originalSaveProducts();
+}
+
+// Hook up settings buttons
+const saveGithubButton = document.getElementById('saveGithubSettings');
+if (saveGithubButton) saveGithubButton.addEventListener('click', saveGithubSettings);
+const testGithubButton = document.getElementById('testGithubConnection');
+if (testGithubButton) testGithubButton.addEventListener('click', testGithubConnection);
+
+// Load settings on start
+loadGithubSettings();
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', async () => {

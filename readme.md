@@ -91,16 +91,11 @@ Features:
 - Optimized font sizes
 - Smooth scrolling
 
-## 🌐 Deployment to Netlify
+## 🌐 Deployment with GitHub Pages (recommended)
 
-### Option 1: Drag and Drop (Easiest)
+This project includes a GitHub Actions workflow that builds the site and publishes it to the `gh-pages` branch on every push to `main`.
 
-1. Go to [Netlify](https://www.netlify.com/)
-2. Sign up or log in
-3. Drag and drop all files onto the Netlify dashboard
-4. Your site will be live in seconds!
-
-### Option 2: Git Deployment
+1. Create a repository on GitHub and push your project to `main`:
 
 ```bash
 git init
@@ -111,15 +106,12 @@ git remote add origin YOUR_REPO_URL
 git push -u origin main
 ```
 
-Then connect your GitHub repository to Netlify.
+2. Enable GitHub Pages for the repository and set the source to the `gh-pages` branch (the workflow will create/update it automatically).
 
-### Option 3: Netlify CLI
+3. (Optional) To allow using the Admin panel to update products automatically, create a Personal Access Token (PAT) with `repo` permissions and enter it in the Admin → GitHub Deployment Settings.
 
-```bash
-npm install -g netlify-cli
-netlify login
-netlify deploy --prod
-```
+Notes:
+- Product updates committed via the Admin panel will update `data/products.json` which triggers the GitHub Actions workflow and redeploys the site.
 
 ## 📁 Files Included
 

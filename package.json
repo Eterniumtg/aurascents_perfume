@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/generate-storefront.mjs",
-    "deploy": "netlify deploy --prod"
+    "deploy:github": "node scripts/generate-storefront.mjs"
   },
   "keywords": [
     "perfume",

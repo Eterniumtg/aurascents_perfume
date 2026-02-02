@@ -1,0 +1,58 @@
+[
+  {
+    "id": "lady1",
+    "name": "Blossom",
+    "price": 250,
+    "category": "ladies",
+    "image": "images/ladies-packages.jpeg",
+    "items": ["Mini perfume", "Scented candle", "Lipgloss and liner", "Chocolate", "Handcream", "Bracelet"]
+  },
+  {
+    "id": "lady2",
+    "name": "Petal",
+    "price": 250,
+    "category": "ladies",
+    "image": "images/ladies-packages.jpeg",
+    "items": ["Mini perfume", "Hairclips", "Chocolate", "Purse", "Necklace", "Lipgloss"]
+  },
+  {
+    "id": "lady3",
+    "name": "Muse",
+    "price": 350,
+    "category": "ladies",
+    "image": "images/ladies-packages.jpeg",
+    "items": ["Mini perfume", "Body Splash", "Hand fan", "Necklace", "Lipgloss and liner", "Chocolate"]
+  },
+  {
+    "id": "lady4",
+    "name": "Signature Luxe",
+    "price": 580,
+    "category": "ladies",
+    "image": "images/ladies-packages.jpeg",
+    "items": ["Luxury Perfume (100ml)", "Hand fan", "Diary", "Hairclips", "Champagne", "Chocolate", "Handcream"]
+  },
+  {
+    "id": "men1",
+    "name": "Classic Man",
+    "price": 450,
+    "category": "men",
+    "image": "images/men-packages.jpeg",
+    "items": ["Perfume", "Wallet", "Belt", "Champagne", "Chocolate"]
+  },
+  {
+    "id": "men2",
+    "name": "Timeless",
+    "price": 500,
+    "category": "men",
+    "image": "images/men-packages.jpeg",
+    "items": ["Perfume (100ml)", "Watch", "Bracelet", "Champagne", "Chocolate"]
+  },
+  {
+    "id": "men3",
+    "name": "Heritage",
+    "price": 700,
+    "category": "men",
+    "image": "images/men-packages.jpeg",
+    "items": ["Luxury Perfume (100ml)", "Men's slippers", "Wallet", "Room Diffuser", "Chocolates", "Atomizer"]
+  }
+]

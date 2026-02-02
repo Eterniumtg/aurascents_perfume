@@ -184,11 +184,13 @@ Copy this data to update your website code.
 
 ### For Production (Recommended)
 1. Add all products in admin panel
-2. Click "Export Products"
-3. Open `js/storefront.js`
-4. Update `defaultProducts` with exported data
-5. Deploy to Netlify
-6. Products now live for all visitors!
+2. (Option A) Click "Export Products" → Manually update `js/storefront.js` and push to your hosting provider
+3. (Option B) Use the Admin GitHub integration to publish automatically:
+   - Create a GitHub Personal Access Token (PAT) with `repo` scope
+   - In Admin → GitHub Deployment Settings enter **Owner**, **Repo** and your **PAT**
+   - Saving products will commit `data/products.json` to your repository and trigger the GitHub Actions workflow to deploy the site automatically
+
+**Security note:** The PAT is stored only in your browser's localStorage. Use a token with minimum scopes and rotate it if exposed.
 
 ---
 

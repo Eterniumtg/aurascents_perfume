@@ -291,14 +291,39 @@
                     <p><strong>1. Add New Product:</strong> Click the "Add New Product" button below</p>
                     <p><strong>2. Upload Image:</strong> Select a product image (it will be stored as base64)</p>
                     <p><strong>3. Fill Details:</strong> Enter product name, price, category, and items</p>
-                    <p><strong>4. Save:</strong> Click save - products are stored in browser localStorage</p>
+                    <p><strong>4. Save:</strong> Click save - products are stored in browser localStorage and (optionally) in your GitHub repo</p>
                     <p><strong>5. Edit/Delete:</strong> Use the action buttons in the table</p>
                     <p class="text-amber-600 mt-4">
                         <i class="fas fa-exclamation-triangle mr-2"></i>
-                        <strong>Note:</strong> Products are saved in your browser. To deploy to the website permanently, 
-                        you'll need to update the <code class="bg-gray-100 px-2 py-1 rounded">js/storefront.js</code> file 
-                        with your products and redeploy to Netlify.
+                        <strong>Note:</strong> To publish product changes to everyone automatically, enter your GitHub repository details and a Personal Access Token in the settings below. This will commit <code class="bg-gray-100 px-2 py-1 rounded">data/products.json</code> and trigger the GitHub Actions deploy.
                     </p>
+                </div>
+            </div>
+
+            <!-- GitHub Deployment Settings -->
+            <div class="admin-card p-6 mb-8" id="githubSettingsCard">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                    <i class="fab fa-github text-black mr-2"></i>GitHub Deployment Settings
+                </h3>
+                <div class="space-y-3 text-gray-700">
+                    <p class="text-sm text-gray-600">Enter your repository details and a Personal Access Token (PAT) with repo contents write permission. The token is stored in your browser localStorage only.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <input type="text" id="githubOwner" class="input-field" placeholder="Owner (e.g., your-username)" />
+                        <input type="text" id="githubRepo" class="input-field" placeholder="Repo (e.g., aurascents_premium_perfume)" />
+                        <input type="password" id="githubToken" class="input-field" placeholder="Personal Access Token (PAT)" />
+                    </div>
+
+                    <div class="flex gap-3 pt-3">
+                        <button id="saveGithubSettings" class="btn-primary">
+                            <i class="fas fa-save mr-2"></i>Save Settings
+                        </button>
+                        <button id="testGithubConnection" class="btn-secondary">
+                            <i class="fas fa-plug mr-2"></i>Test Connection
+                        </button>
+                    </div>
+
+                    <p id="githubSettingsNotice" class="hidden text-sm mt-2"></p>
                 </div>
             </div>
 
