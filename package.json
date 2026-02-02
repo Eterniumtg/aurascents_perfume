@@ -1,0 +1,24 @@
+{
+  "name": "aurascents-premium-perfume",
+  "version": "1.0.0",
+  "description": "AuraScents - Premium Perfumes E-commerce Website",
+  "main": "index.html",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/generate-storefront.mjs",
+    "deploy": "netlify deploy --prod"
+  },
+  "keywords": [
+    "perfume",
+    "fragrance",
+    "gift",
+    "ecommerce"
+  ],
+  "author": "AuraScents",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@netlify/blobs": "^10.5.0",
+    "@netlify/functions": "^5.1.2"
+  }
+}

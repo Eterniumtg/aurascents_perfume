@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraScents | Premium Perfumes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#8B2635',
+                        secondary: '#D4AF37',
+                        accent: '#F8E5E5',
+                        dark: '#2C1810'
+                    },
+                    fontFamily: {
+                        display: ['Playfair Display', 'serif'],
+                        body: ['Montserrat', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            background: #FFF9F5;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, rgba(139, 38, 53, 0.95) 0%, rgba(212, 175, 55, 0.85) 100%),
+                        url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M54.627 0l.83.828-1.415 1.415L51.8 0h2.827zM5.373 0l-.83.828L5.96 2.243 8.2 0H5.374zM48.97 0l3.657 3.657-1.414 1.414L46.143 0h2.828zM11.03 0L7.372 3.657 8.787 5.07 13.857 0H11.03zm32.284 0L49.8 6.485 48.384 7.9l-7.9-7.9h2.83zM16.686 0L10.2 6.485 11.616 7.9l7.9-7.9h-2.83zm20.97 0l9.315 9.314-1.414 1.414L34.828 0h2.83zM22.344 0L13.03 9.314l1.414 1.414L25.172 0h-2.83zM32 0l12.142 12.142-1.414 1.414L30 .828 17.272 13.556l-1.414-1.414L28 0h4zM.284 0l28 28-1.414 1.414L0 2.544V0h.284zM0 5.373l25.456 25.455-1.414 1.415L0 7.788V5.374zm0 5.656L22.627 33.76l-1.414 1.414L0 13.03v-1.999zm0 5.656l19.8 19.8-1.415 1.413L0 18.686v-1.999zm0 5.657l17.142 17.142-1.414 1.414L0 24.343v-1.999zm0 5.657L14.313 42.07l-1.414 1.414L0 30v-1.999zm0 5.657L11.485 48.97 10.07 50.384 0 35.656v-1.999zm0 5.656l8.656 8.657-1.414 1.414L0 41.313v-1.999zm0 5.657l5.828 5.828-1.414 1.414L0 46.97v-1.999z" fill="%23D4AF37" fill-opacity="0.05" fill-rule="evenodd"/%3E%3C/svg%3E');
+            min-height: 85vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .floating-ornament {
+            position: absolute;
+            opacity: 0.15;
+            animation: float 20s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(10deg); }
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(139, 38, 53, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(139, 38, 53, 0.2);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin-bottom: 1rem;
+        }
+        
+        .product-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #8B2635, #D4AF37);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .price-tag {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #8B2635, #D4AF37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .currency-symbol {
+            font-size: 1.5rem;
+            vertical-align: super;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #8B2635, #D4AF37);
+            color: white;
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 38, 53, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 38, 53, 0.4);
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+        
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: #8B2635;
+            text-align: center;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2rem;
+            }
+            .product-image {
+                height: 200px;
+            }
+        }
+        
+        .section-subtitle {
+            color: #D4AF37;
+            font-style: italic;
+            font-size: 1.2rem;
+        }
+        
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #D4AF37;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        
+        .package-item {
+            padding: 0.5rem 0;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #8B2635, #D4AF37);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(139, 38, 53, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        
+        .scroll-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .scroll-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(139, 38, 53, 0.4);
+        }
+        
+        .pulse-icon {
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+        }
+
+        .contact-info {
+            background: linear-gradient(135deg, rgba(139, 38, 53, 0.05), rgba(212, 175, 55, 0.05));
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-feather pulse-icon text-primary text-2xl"></i>
+                    <div>
+                        <span class="text-2xl font-display font-bold text-primary block">AuraScents</span>
+                        <span class="text-xs text-secondary font-semibold">Premium Collection</span>
+                    </div>
+                </div>
+                
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="text-dark hover:text-primary transition font-medium">Home</a>
+                    <a href="#ladies" class="text-dark hover:text-primary transition font-medium">For Her</a>
+                    <a href="#men" class="text-dark hover:text-primary transition font-medium">For Him</a>
+                    <a href="#contact" class="text-dark hover:text-primary transition font-medium">Contact</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <a href="https://wa.me/233206845402?text=Hi%20I%27m%20interested%20in%20AuraScents" target="_blank" rel="noopener noreferrer" title="Chat on WhatsApp: 0206845402" class="text-dark hover:text-primary transition">
+                        <i class="fab fa-whatsapp text-2xl"></i>
+                    </a>
+                    <a href="https://www.snapchat.com/add/naa.deii8?share_id=VGrusOS-O1I&locale=en-US" target="_blank" rel="noopener noreferrer" title="Add on Snapchat: naa.dei18" class="text-dark hover:text-primary transition">
+                        <i class="fab fa-snapchat text-2xl"></i>
+                    </a>
+                    <button onclick="openCart()" class="relative text-dark hover:text-primary transition">
+                        <i class="fas fa-shopping-cart text-2xl"></i>
+                        <span id="cartCount" class="cart-badge">0</span>
+                    </button>
+                    <button onclick="toggleMobileMenu()" class="md:hidden text-dark">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="mobileMenu" class="hidden md:hidden mt-4 pb-4">
+                <a href="#home" class="block py-2 text-dark hover:text-primary transition">Home</a>
+                <a href="#ladies" class="block py-2 text-dark hover:text-primary transition">For Her</a>
+                <a href="#men" class="block py-2 text-dark hover:text-primary transition">For Him</a>
+                <a href="#contact" class="block py-2 text-dark hover:text-primary transition">Contact</a>
+                <div class="flex items-center mt-4 space-x-4">
+                    <a href="https://wa.me/233206845402?text=Hi%20I%27m%20interested%20in%20AuraScents" target="_blank" rel="noopener noreferrer" class="text-dark hover:text-primary transition">
+                        <i class="fab fa-whatsapp text-2xl"></i>
+                    </a>
+                    <a href="tel:+233557743737" class="text-dark hover:text-primary transition">
+                        <i class="fas fa-phone text-2xl"></i>
+                    </a>
+                    <a href="https://www.snapchat.com/add/naa.dei18" target="_blank" rel="noopener noreferrer" class="text-dark hover:text-primary transition">
+                        <i class="fab fa-snapchat text-2xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="hero-hearts">
+            <i class="fas fa-star floating-ornament text-9xl text-white" style="top: 10%; left: 10%;"></i>
+            <i class="fas fa-star floating-ornament text-7xl text-white" style="top: 60%; left: 70%; animation-delay: 3s;"></i>
+            <i class="fas fa-star floating-ornament text-8xl text-white" style="top: 30%; left: 80%; animation-delay: 6s;"></i>
+        </div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center text-white">
+                <h1 class="text-4xl md:text-7xl lg:text-8xl font-display font-black mb-4">
+                    Luxury Fragrances for Every Occasion
+                </h1>
+                <p class="text-xl md:text-2xl lg:text-3xl font-light mb-4 italic">
+                    Limited Time Offer
+                </p>
+                <p class="text-lg md:text-xl mb-8 max-w-2xl mx-auto">
+                    Curated luxury perfume packages designed to make every moment special
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="scrollToSection('ladies')" class="btn-primary">
+                        <i class="fas fa-venus mr-2"></i>Shop For Her
+                    </button>
+                    <button onclick="scrollToSection('men')" class="btn-primary">
+                        <i class="fas fa-mars mr-2"></i>Shop For Him
+                    </button>
+                </div>
+                
+                <!-- Contact Info in Hero -->
+                <div class="contact-info mt-8 max-w-2xl mx-auto">
+                    <div class="flex items-center justify-center space-x-6">
+                        <a href="https://wa.me/233206845402?text=Hi%20I%27m%20interested%20in%20AuraScents" target="_blank" rel="noopener noreferrer" title="Chat on WhatsApp: 0206845402" class="text-white hover:text-secondary transition inline-flex items-center gap-2">
+                            <i class="fab fa-whatsapp text-2xl"></i>
+                            <span class="sr-only">WhatsApp 0206845402</span>
+                        </a>
+                        <a href="tel:+233557743737" title="Call: 0557743737" class="text-white hover:text-secondary transition inline-flex items-center gap-2">
+                            <i class="fas fa-phone text-2xl"></i>
+                            <span class="sr-only">Call 0557743737</span>
+                        </a>
+                        <a href="https://www.snapchat.com/add/naa.deii8?share_id=VGrusOS-O1I&locale=en-US" target="_blank" rel="noopener noreferrer" title="Add on Snapchat: naa.dei18" class="text-white hover:text-secondary transition inline-flex items-center gap-2">
+                            <i class="fab fa-snapchat text-2xl"></i>
+                            <span class="sr-only">Snapchat naa.dei18</span>
+                        </a>
+                    </div>
+                    <p class="text-sm md:text-base mt-3"><i class="fas fa-map-marker-alt mr-2"></i>Location: Knust, Kotei</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ladies Collection -->
+    <section id="ladies" class="py-12 md:py-20">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12 md:mb-16">
+                <h2 class="section-title">Women's Collection</h2>
+                <p class="section-subtitle">Elegant Gift Sets and Signature Scents</p>
+            </div>
+            
+            <div id="ladiesProducts" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                <!-- Products will be inserted here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Men's Collection -->
+    <section id="men" class="py-12 md:py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12 md:mb-16">
+                <h2 class="section-title">Men's Collection</h2>
+                <p class="section-subtitle">Bold & Sophisticated Scents</p>
+            </div>
+            
+            <div id="menProducts" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                <!-- Products will be inserted here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-12 md:py-20 bg-gradient-to-br from-primary to-secondary text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-5xl font-display font-bold mb-8">Contact Us</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="p-6 md:p-8">
+                    <a href="https://wa.me/233206845402?text=Hi%20I%27m%20interested%20in%20AuraScents" target="_blank" rel="noopener noreferrer" class="inline-block hover:text-secondary">
+                        <i class="fab fa-whatsapp text-4xl md:text-6xl mb-4"></i>
+                        <h3 class="text-xl md:text-2xl font-bold mb-4 inline-block ml-3">WhatsApp</h3>
+                    </a>
+                    <p class="text-base md:text-lg opacity-90 mt-2"><a href="https://wa.me/233206845402?text=Hi%20I%27m%20interested%20in%20AuraScents" target="_blank" rel="noopener noreferrer" class="hover:text-secondary">0206845402</a></p>
+                    <p class="text-base md:text-lg opacity-90 mt-1"><a href="tel:+233557743737" class="hover:text-secondary">0557743737</a></p>
+                </div>
+                <div class="p-6 md:p-8">
+                    <a href="https://www.snapchat.com/add/naa.deii8?share_id=VGrusOS-O1I&locale=en-US" target="_blank" rel="noopener noreferrer" class="inline-block hover:text-secondary">
+                        <i class="fab fa-snapchat text-4xl md:text-6xl mb-4"></i>
+                        <h3 class="text-xl md:text-2xl font-bold mb-4 inline-block ml-3">Snapchat</h3>
+                    </a>
+                    <p class="text-base md:text-lg opacity-90 mt-2"><a href="https://www.snapchat.com/add/naa.deii8?share_id=VGrusOS-O1I&locale=en-US" target="_blank" rel="noopener noreferrer" class="hover:text-secondary">naa.dei18</a></p>
+                </div>
+                <div class="p-6 md:p-8">
+                    <i class="fas fa-map-marker-alt text-4xl md:text-6xl mb-4"></i>
+                    <h3 class="text-xl md:text-2xl font-bold mb-4">Location</h3>
+                    <p class="text-base md:text-lg opacity-90">Knust, Kotei</p>
+                </div>
+            </div>
+
+            <div class="mt-12 p-6 md:p-8 bg-white bg-opacity-10 rounded-2xl max-w-3xl mx-auto backdrop-blur">
+            
+            <div class="mt-12 p-6 md:p-8 bg-white bg-opacity-10 rounded-2xl max-w-3xl mx-auto backdrop-blur">
+                <h3 class="text-xl md:text-2xl font-bold mb-4">Important Notes</h3>
+                <div class="text-left space-y-2 text-sm md:text-base">
+                    <p>✨ Each gift set can be personalized to reflect your unique style</p>
+                    <p>✨ Additional items may be included upon request at a fee</p>
+                    <p>✨ Kindly place orders in advance for premium packaging and delivery</p>
+                    <p>✨ Also single perfumes are available for purchase</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-8 md:py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-feather text-secondary text-2xl"></i>
+                        <span class="text-2xl font-display font-bold">AuraScents</span>
+                    </div>
+                    <p class="text-gray-400 text-sm md:text-base">Making every moment unforgettable with luxury fragrances</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg md:text-xl mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm md:text-base">
+                        <li><a href="#ladies" class="text-gray-400 hover:text-secondary transition">For Her</a></li>
+                        <li><a href="#men" class="text-gray-400 hover:text-secondary transition">For Him</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-secondary transition">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg md:text-xl mb-4">Contact Us</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm md:text-base">
+                        <li><i class="fab fa-whatsapp mr-2"></i><a href="https://wa.me/233206845402?text=Hi%20I%27m%20interested%20in%20AuraScents" target="_blank" rel="noopener noreferrer" class="hover:text-secondary">0206845402</a>, <i class="fas fa-phone mr-2"></i><a href="tel:+233557743737" class="hover:text-secondary">0557743737</a></li>
+                        <li><i class="fab fa-snapchat mr-2"></i><a href="https://www.snapchat.com/add/naa.deii8?share_id=VGrusOS-O1I&locale=en-US" target="_blank" rel="noopener noreferrer" class="hover:text-secondary">naa.dei18</a></li>
+                        <li><i class="fas fa-map-marker-alt mr-2"></i>Knust, Kotei</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p>&copy; 2026 AuraScents. All rights reserved. Made by <b>Rich_Studio</b> with <i class="fas fa-feather text-secondary"></i></p>
+                <p class="mt-2"><a href="admin.html" class="text-gray-600 hover:text-secondary transition text-xs">Admin</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl md:text-3xl font-display font-bold text-primary">Your Cart</h2>
+                <button onclick="closeCart()" class="text-gray-500 hover:text-primary text-3xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div id="cartItems" class="mb-6">
+                <!-- Cart items will be inserted here -->
+            </div>
+            
+            <div class="border-t pt-6">
+                <div class="flex justify-between items-center mb-6">
+                    <span class="text-xl md:text-2xl font-bold text-dark">Total:</span>
+                    <span id="cartTotal" class="text-2xl md:text-3xl font-display font-bold text-primary">GH₵ 0</span>
+                </div>
+                <button onclick="proceedToCheckout()" class="btn-primary w-full">
+                    <i class="fab fa-whatsapp mr-2"></i>Checkout via WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <div id="scrollTop" class="scroll-top" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <script src="js/storefront.js"></script>
+</body>
+</html>
